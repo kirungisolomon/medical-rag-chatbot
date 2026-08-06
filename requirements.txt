@@ -10,3 +10,4 @@ tiktoken
 fastapi
 uvicorn
 sentence-transformers
+faiss-cpu
