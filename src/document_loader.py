@@ -1,33 +1,36 @@
-from pathlib import Path
-from langchain_community.document_loaders import PyPDFLoader
+import os
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
 
 
-def load_documents(directory: str):
+def load_documents(directory):
     """
-    Load PDF documents from a directory.
-
-    Args:
-        directory: Path containing PDF files
-
-    Returns:
-        List of LangChain Document objects
+    Load PDF and TXT medical documents.
     """
 
     documents = []
 
-    pdf_files = Path(directory).glob("*.pdf")
+    for filename in os.listdir(directory):
 
-    for pdf_file in pdf_files:
-        loader = PyPDFLoader(str(pdf_file))
-        documents.extend(loader.load())
+        file_path = os.path.join(
+            directory,
+            filename
+        )
+
+        if filename.endswith(".pdf"):
+            loader = PyPDFLoader(file_path)
+            documents.extend(loader.load())
+
+        elif filename.endswith(".txt"):
+            loader = TextLoader(file_path)
+            documents.extend(loader.load())
 
     return documents
 
 
 if __name__ == "__main__":
-    docs = load_documents("data/medical_documents")
+
+    docs = load_documents(
+        "data/medical_documents"
+    )
 
     print(f"Loaded {len(docs)} document pages")
-
-    if docs:
-        print(docs[0].page_content[:500])
